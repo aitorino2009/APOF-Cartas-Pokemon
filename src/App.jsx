@@ -1,38 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import Header from './components/Header/Header';
-import BattleArena from './components/BattleArena/BattleArena';
-import BoosterPack from './components/BoosterPack/BoosterPack';
-import DeckBuilder from './components/DeckBuilder/DeckBuilder';
-import StatDuel from './components/StatDuel/StatDuel';
-import { getStarterDeck } from './services/pokeApi';
+import Cabecera from './componentes/Cabecera/Cabecera';
+import ArenaBatalla from './componentes/ArenaBatalla/ArenaBatalla';
+import SobreCartas from './componentes/SobreCartas/SobreCartas';
+import CreadorMazo from './componentes/CreadorMazo/CreadorMazo';
+import EmpezarDuelo from './componentes/EmpezarDuelo/EmpezarDuelo';
+import { getStarterDeck } from './servicios/servicioPokeApi';
 
-const STORAGE_KEY_COLLECTION = 'pokecard_saved_collection';
-const STORAGE_KEY_DECK = 'pokecard_saved_battle_deck';
-const STORAGE_KEY_COINS = 'pokecard_saved_coins';
-const STORAGE_KEY_PACKS = 'pokecard_saved_packs';
-const STORAGE_KEY_WINS = 'pokecard_saved_wins';
+const CLAVE_GUARDADO_COLECCION = 'pokecard_saved_collection';
+const CLAVE_GUARDADO_MAZO = 'pokecard_saved_battle_deck';
+const CLAVE_GUARDADO_MONEDAS = 'pokecard_saved_coins';
+const CLAVE_GUARDADO_SOBRES = 'pokecard_saved_packs';
+const CLAVE_GUARDADO_VICTORIAS = 'pokecard_saved_wins';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('arena');
   const [loadingInitial, setLoadingInitial] = useState(true);
 
-  // Game state
+  // Estado del juego
   const [collection, setCollection] = useState([]);
   const [battleDeck, setBattleDeck] = useState([]);
   const [coins, setCoins] = useState(150);
   const [packsCount, setPacksCount] = useState(2);
   const [wins, setWins] = useState(0);
 
-  // Initialize data on mount
+  // Carga inicial
   useEffect(() => {
     async function initGameData() {
       try {
-        const savedCollection = localStorage.getItem(STORAGE_KEY_COLLECTION);
-        const savedDeck = localStorage.getItem(STORAGE_KEY_DECK);
-        const savedCoins = localStorage.getItem(STORAGE_KEY_COINS);
-        const savedPacks = localStorage.getItem(STORAGE_KEY_PACKS);
-        const savedWins = localStorage.getItem(STORAGE_KEY_WINS);
+        const savedCollection = localStorage.getItem(CLAVE_GUARDADO_COLECCION);
+        const savedDeck = localStorage.getItem(CLAVE_GUARDADO_MAZO);
+        const savedCoins = localStorage.getItem(CLAVE_GUARDADO_MONEDAS);
+        const savedPacks = localStorage.getItem(CLAVE_GUARDADO_SOBRES);
+        const savedWins = localStorage.getItem(CLAVE_GUARDADO_VICTORIAS);
 
         if (savedCoins) setCoins(parseInt(savedCoins, 10));
         if (savedPacks) setPacksCount(parseInt(savedPacks, 10));
@@ -48,15 +48,15 @@ export default function App() {
             setBattleDeck(parsedColl.slice(0, 3));
           }
         } else {
-          // Fetch starters from PokéAPI
+          // Obtener mazo inicial de PokéAPI
           const starters = await getStarterDeck();
           setCollection(starters);
           setBattleDeck(starters.slice(0, 3));
-          localStorage.setItem(STORAGE_KEY_COLLECTION, JSON.stringify(starters));
-          localStorage.setItem(STORAGE_KEY_DECK, JSON.stringify(starters.slice(0, 3)));
+          localStorage.setItem(CLAVE_GUARDADO_COLECCION, JSON.stringify(starters));
+          localStorage.setItem(CLAVE_GUARDADO_MAZO, JSON.stringify(starters.slice(0, 3)));
         }
       } catch (err) {
-        console.error('Failed to initialize starter deck:', err);
+        console.error('Error al inicializar mazo:', err);
       } finally {
         setLoadingInitial(false);
       }
@@ -65,28 +65,28 @@ export default function App() {
     initGameData();
   }, []);
 
-  // Save changes to localStorage
+  // Persistencia en localStorage
   useEffect(() => {
     if (!loadingInitial && collection.length > 0) {
-      localStorage.setItem(STORAGE_KEY_COLLECTION, JSON.stringify(collection));
+      localStorage.setItem(CLAVE_GUARDADO_COLECCION, JSON.stringify(collection));
     }
   }, [collection, loadingInitial]);
 
   useEffect(() => {
     if (!loadingInitial) {
-      localStorage.setItem(STORAGE_KEY_DECK, JSON.stringify(battleDeck));
+      localStorage.setItem(CLAVE_GUARDADO_MAZO, JSON.stringify(battleDeck));
     }
   }, [battleDeck, loadingInitial]);
 
   useEffect(() => {
     if (!loadingInitial) {
-      localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
-      localStorage.setItem(STORAGE_KEY_PACKS, packsCount.toString());
-      localStorage.setItem(STORAGE_KEY_WINS, wins.toString());
+      localStorage.setItem(CLAVE_GUARDADO_MONEDAS, coins.toString());
+      localStorage.setItem(CLAVE_GUARDADO_SOBRES, packsCount.toString());
+      localStorage.setItem(CLAVE_GUARDADO_VICTORIAS, wins.toString());
     }
   }, [coins, packsCount, wins, loadingInitial]);
 
-  // Card & Booster Actions
+  // Acciones de sobres y recompensas
   const handleAddCardsToCollection = (newCards) => {
     setCollection(prev => [...newCards, ...prev]);
   };
@@ -101,12 +101,12 @@ export default function App() {
 
   const handleBattleVictory = (coinsReward = 100) => {
     setCoins(c => c + coinsReward);
-    setPacksCount(p => p + 1); // Reward 1 free booster pack on victory!
+    setPacksCount(p => p + 1);
     setWins(w => w + 1);
   };
 
   const handleBattleDefeat = () => {
-    // Keep stats intact
+    // Registro de derrota
   };
 
   const handleRewardCoins = (amount) => {
@@ -115,8 +115,8 @@ export default function App() {
 
   return (
     <div className="pokecard-app">
-      {/* GLOBAL HEADER */}
-      <Header
+      {/* CABECERA */}
+      <Cabecera
         activeTab={activeTab}
         onSelectTab={setActiveTab}
         coins={coins}
@@ -124,7 +124,7 @@ export default function App() {
         wins={wins}
       />
 
-      {/* MAIN VIEWPORT */}
+      {/* CONTENIDO PRINCIPAL */}
       <main className="app-main-content">
         {loadingInitial ? (
           <div className="initial-loading-screen">
@@ -135,7 +135,7 @@ export default function App() {
         ) : (
           <>
             {activeTab === 'arena' && (
-              <BattleArena
+              <ArenaBatalla
                 playerDeck={battleDeck}
                 onBattleVictory={handleBattleVictory}
                 onBattleDefeat={handleBattleDefeat}
@@ -143,7 +143,7 @@ export default function App() {
             )}
 
             {activeTab === 'packs' && (
-              <BoosterPack
+              <SobreCartas
                 packsCount={packsCount}
                 coins={coins}
                 onAddCardsToCollection={handleAddCardsToCollection}
@@ -153,7 +153,7 @@ export default function App() {
             )}
 
             {activeTab === 'deck' && (
-              <DeckBuilder
+              <CreadorMazo
                 collection={collection}
                 battleDeck={battleDeck}
                 onUpdateDeck={setBattleDeck}
@@ -162,7 +162,7 @@ export default function App() {
             )}
 
             {activeTab === 'duel' && (
-              <StatDuel
+              <EmpezarDuelo
                 playerCollection={collection}
                 onRewardCoins={handleRewardCoins}
               />
@@ -171,13 +171,13 @@ export default function App() {
         )}
       </main>
 
-      {/* FOOTER */}
+      {/* PIE DE PÁGINA */}
       <footer className="game-footer">
         <div className="footer-content">
           <p>
             🎮 <strong>PokéCard Arena</strong> — Desarrollado con <strong>Vite</strong>, <strong>React</strong> y la API gratuita de <a href="https://pokeapi.co/" target="_blank" rel="noopener noreferrer">PokéAPI</a>.
           </p>
-          <span className="footer-tag">CSS Modular Puro • Git Component Branches</span>
+          <span className="footer-tag">CSS Modular Puro en Castellano</span>
         </div>
       </footer>
     </div>
