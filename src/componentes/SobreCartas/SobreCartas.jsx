@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
-import './BoosterPack.css';
-import PokemonCard from '../PokemonCard/PokemonCard';
-import { generateBoosterPack } from '../../services/pokeApi';
-import { sound } from '../../services/soundService';
+import './SobreCartas.css';
+import CartaPokemon from '../CartaPokemon/CartaPokemon';
+import { generateBoosterPack } from '../../servicios/servicioPokeApi';
+import { sound } from '../../servicios/servicioSonido';
 import { Sparkles, PackageOpen, RefreshCw, CheckCircle2 } from 'lucide-react';
 
-export default function BoosterPack({
+export default function SobreCartas({
   packsCount = 2,
   coins = 100,
   onAddCardsToCollection,
@@ -23,7 +23,6 @@ export default function BoosterPack({
     setIsLoading(true);
 
     try {
-      // Consume pack or coins
       if (packsCount > 0) {
         onConsumePack?.();
       } else {
@@ -33,7 +32,7 @@ export default function BoosterPack({
       sound.playBoosterRip();
       setPackStage('ripping');
 
-      // Fetch 5 random cards from PokéAPI
+      // Obtener 5 cartas aleatorias desde PokéAPI
       const newCards = await generateBoosterPack();
       setCards(newCards);
       setRevealedIndices(new Set());
@@ -43,7 +42,7 @@ export default function BoosterPack({
         setIsLoading(false);
       }, 700);
     } catch (err) {
-      console.error('Error opening pack:', err);
+      console.error('Error al abrir sobre:', err);
       setIsLoading(false);
       setPackStage('sealed');
     }
@@ -92,7 +91,7 @@ export default function BoosterPack({
 
   return (
     <div className="booster-pack-container">
-      {/* Top Banner Stats */}
+      {/* Barra superior de estado */}
       <div className="booster-header">
         <div className="booster-info">
           <h2>Tienda & Apertura de Sobres</h2>
@@ -108,7 +107,7 @@ export default function BoosterPack({
         </div>
       </div>
 
-      {/* STAGE 1: SEALED BOOSTER PACK */}
+      {/* FASE 1: SOBRE SELLADO */}
       {packStage === 'sealed' && (
         <div className="booster-stage-sealed">
           <div className="foil-wrapper" onClick={handleOpenPack}>
@@ -159,7 +158,7 @@ export default function BoosterPack({
         </div>
       )}
 
-      {/* STAGE 2: RIPPING ANIMATION */}
+      {/* FASE 2: ANIMACIÓN DE DESGARRE */}
       {packStage === 'ripping' && (
         <div className="booster-stage-ripping">
           <div className="foil-card-pack is-ripping">
@@ -172,7 +171,7 @@ export default function BoosterPack({
         </div>
       )}
 
-      {/* STAGE 3 & 4: CARDS REVEALING & SUMMARY */}
+      {/* FASE 3 & 4: REVELACIÓN Y GUARDADO */}
       {(packStage === 'revealing' || packStage === 'done') && (
         <div className="booster-stage-revealing">
           <div className="reveal-instruction">
@@ -192,12 +191,12 @@ export default function BoosterPack({
                   className="reveal-card-slot"
                   onClick={() => handleFlipCard(idx)}
                 >
-                  <PokemonCard
+                  <CartaPokemon
                     pokemon={card}
                     flipped={isFlipped}
                     size="md"
                     showStats={true}
-                    badge={revealedIndices.has(idx) ? card.rarity.toUpperCase() : 'TAP'}
+                    badge={revealedIndices.has(idx) ? card.rarity.toUpperCase() : 'TOCAR'}
                   />
                 </div>
               );
