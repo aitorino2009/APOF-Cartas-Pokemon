@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import './Header.css';
-import { sound } from '../../services/soundService';
+import './Cabecera.css';
+import { sound } from '../../servicios/servicioSonido';
 import { 
   Swords, 
   PackageOpen, 
@@ -13,7 +13,7 @@ import {
   X
 } from 'lucide-react';
 
-export default function Header({
+export default function Cabecera({
   activeTab = 'arena',
   onSelectTab,
   coins = 100,
@@ -36,7 +36,7 @@ export default function Header({
 
   return (
     <header className="game-header">
-      {/* BRAND & LOGO */}
+      {/* LOGO */}
       <div className="header-brand">
         <div className="header-pokeball-icon">
           <div className="pokeball-mini-top" />
@@ -49,7 +49,7 @@ export default function Header({
         </div>
       </div>
 
-      {/* NAVIGATION TABS */}
+      {/* PESTAÑAS DE NAVEGACIÓN */}
       <nav className="header-nav">
         <button
           className={`nav-btn ${activeTab === 'arena' ? 'active' : ''}`}
@@ -85,7 +85,7 @@ export default function Header({
         </button>
       </nav>
 
-      {/* CURRENCY & UTILITIES */}
+      {/* RECURSOS Y UTILIDADES */}
       <div className="header-utilities">
         <div className="stat-badge coins" title="Monedas para comprar sobres">
           <span>🪙</span>
@@ -114,7 +114,7 @@ export default function Header({
         </button>
       </div>
 
-      {/* RULES & TYPE ADVANTAGE MODAL */}
+      {/* MODAL DE REGLAS Y VENTAJAS DE TIPO */}
       {showRulesModal && (
         <div className="rules-modal-backdrop" onClick={() => setShowRulesModal(false)}>
           <div className="rules-modal-card" onClick={(e) => e.stopPropagation()}>
