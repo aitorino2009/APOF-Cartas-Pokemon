@@ -1,0 +1,287 @@
+/* ============================================================
+   DECK BUILDER STYLING (DeckBuilder.css)
+   Isolated, pure CSS styling for Deck Builder & Collection Vault
+   ============================================================ */
+
+.deck-builder-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* SECTION 1: ACTIVE BATTLE DECK PANEL */
+.active-deck-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: var(--shadow-md);
+}
+
+.deck-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  border-bottom: 1px solid var(--border-glass);
+  padding-bottom: 16px;
+}
+
+.deck-title-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.deck-icon {
+  color: var(--accent-azure);
+}
+
+.deck-title-group h3 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.deck-title-group p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.deck-stats-pill {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.stat-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-family: var(--font-stats);
+  font-size: 0.9rem;
+  font-weight: 700;
+  border: 1px solid var(--border-glass);
+}
+
+/* Slots Grid */
+.deck-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+.deck-slot-card {
+  width: 100%;
+  max-width: 220px;
+  min-height: 290px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.slot-card-active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-remove-slot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 8px;
+  transition: all var(--transition-fast);
+}
+
+.btn-remove-slot:hover {
+  background: rgba(239, 68, 68, 0.3);
+  color: #fff;
+}
+
+.slot-empty {
+  width: 100%;
+  height: 250px;
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  border-radius: var(--card-radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px;
+  color: var(--text-muted);
+  gap: 6px;
+  transition: all var(--transition-fast);
+}
+
+.slot-empty:hover {
+  border-color: var(--accent-azure);
+  background: rgba(56, 189, 248, 0.05);
+}
+
+.empty-slot-plus {
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.slot-empty span {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.slot-empty small {
+  font-size: 0.75rem;
+}
+
+/* SECTION 2: FILTERS & SEARCH */
+.collection-filters-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  background: var(--bg-card);
+  padding: 14px 20px;
+  border-radius: 14px;
+  border: 1px solid var(--border-glass);
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 220px;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-glass);
+}
+
+.search-box input {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 8px 4px;
+}
+
+.search-icon {
+  color: var(--text-muted);
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+
+.filter-group select {
+  font-size: 0.85rem;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+/* SECTION 3: COLLECTION VAULT GRID */
+.collection-vault-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 4px;
+}
+
+.collection-vault-header h4 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.collection-vault-header small {
+  color: var(--text-secondary);
+}
+
+.collection-empty {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px dashed var(--border-glass);
+  color: var(--text-muted);
+}
+
+.collection-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+.collection-card-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  transition: transform var(--transition-fast);
+}
+
+.collection-card-item.is-in-deck {
+  opacity: 0.85;
+}
+
+.btn-card-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 8px;
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-card-action.add {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: #7dd3fc;
+}
+
+.btn-card-action.add:hover {
+  background: rgba(56, 189, 248, 0.3);
+  color: #fff;
+}
+
+.btn-card-action.remove {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+
+.btn-card-action.remove:hover {
+  background: rgba(239, 68, 68, 0.3);
+  color: #fff;
+}
