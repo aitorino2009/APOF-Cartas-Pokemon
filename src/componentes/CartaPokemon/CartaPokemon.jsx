@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react';
-import './PokemonCard.css';
-import { sound } from '../../services/soundService';
+import './CartaPokemon.css';
+import { sound } from '../../servicios/servicioSonido';
 
-export default function PokemonCard({
+export default function CartaPokemon({
   pokemon,
   flipped = false,
   isHoverable = true,
@@ -85,29 +85,29 @@ export default function PokemonCard({
     >
       <div className={`pokemon-card-inner ${flipped ? 'is-flipped' : ''} rarity-${pokemon.rarity || 'common'}`}>
         
-        {/* FRONT OF THE CARD */}
+        {/* CARA FRONTAL DE LA CARTA */}
         <div className={`card-face card-front type-${pokemon.primaryType || 'normal'}`}>
-          {/* Holographic Glare Layer */}
+          {/* Capa de reflejo holográfico */}
           <div className="card-glare" style={glareStyle} />
           
-          {/* Rarity Foil Shimmer for Epic & Legendary */}
+          {/* Brillo especial para cartas Épicas y Legendarias */}
           {(pokemon.rarity === 'legendary' || pokemon.rarity === 'epic') && (
             <div className="card-holo-shimmer" />
           )}
 
-          {/* Card Header: Name, HP, Type Icon */}
+          {/* Encabezado: Nombre, PS y número Pokédex */}
           <div className="card-header">
             <div className="card-name-group">
               <span className="card-dex-num">#{String(pokemon.id || 0).padStart(3, '0')}</span>
               <h3 className="card-name">{pokemon.name}</h3>
             </div>
             <div className="card-hp-badge">
-              <span className="hp-label">HP</span>
+              <span className="hp-label">PS</span>
               <span className="hp-value">{pokemon.hp}/{pokemon.maxHp}</span>
             </div>
           </div>
 
-          {/* HP Bar */}
+          {/* Barra de Puntos de Salud */}
           <div className="card-hp-track">
             <div
               className={`card-hp-fill ${hpPercent < 25 ? 'critical' : hpPercent < 50 ? 'warning' : 'healthy'}`}
@@ -115,7 +115,7 @@ export default function PokemonCard({
             />
           </div>
 
-          {/* Pokémon Artwork Frame */}
+          {/* Marco de ilustración Pokémon */}
           <div className="card-artwork-frame">
             <div className="artwork-bg-glow" />
             <img
@@ -127,7 +127,7 @@ export default function PokemonCard({
             {badge && <div className="card-corner-badge">{badge}</div>}
           </div>
 
-          {/* Types Badges */}
+          {/* Etiquetas de tipos elementales */}
           <div className="card-types-row">
             <span className={`type-tag type-${pokemon.primaryType}`}>
               {pokemon.primaryType}
@@ -142,7 +142,7 @@ export default function PokemonCard({
             </span>
           </div>
 
-          {/* Stats Grid */}
+          {/* Rejilla de Atributos / Estadísticas */}
           {showStats && (
             <div className="card-stats-grid">
               <div className="stat-item">
@@ -158,13 +158,13 @@ export default function PokemonCard({
                 <span className="stat-val">{pokemon.spAttack}</span>
               </div>
               <div className="stat-item">
-                <span className="stat-label">SPD</span>
+                <span className="stat-label">VEL</span>
                 <span className="stat-val">{pokemon.speed}</span>
               </div>
             </div>
           )}
 
-          {/* Guarding Shield Visual */}
+          {/* Escudo Defensivo */}
           {isGuarding && (
             <div className="guard-overlay">
               <div className="guard-shield-icon">🛡️</div>
@@ -173,7 +173,7 @@ export default function PokemonCard({
           )}
         </div>
 
-        {/* BACK OF THE CARD */}
+        {/* REVERSO DE LA CARTA (POKÉBALL) */}
         <div className="card-face card-back">
           <div className="card-back-pattern">
             <div className="pokeball-back">
