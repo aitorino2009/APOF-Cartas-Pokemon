@@ -1,0 +1,323 @@
+/* ============================================================
+   BOOSTER PACK STYLING (BoosterPack.css)
+   Isolated, pure CSS styling for 3D Foil Booster Pack Simulator
+   ============================================================ */
+
+.booster-pack-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.booster-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: var(--bg-card);
+  padding: 18px 24px;
+  border-radius: 16px;
+  border: 1px solid var(--border-glass);
+}
+
+.booster-info h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.booster-info p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.booster-inventory-pill {
+  display: flex;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-glass);
+}
+
+.pill-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.pill-item strong {
+  color: var(--accent-gold);
+}
+
+/* STAGE 1: SEALED FOIL PACK */
+.booster-stage-sealed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  gap: 30px;
+}
+
+.foil-wrapper {
+  perspective: 1200px;
+  cursor: pointer;
+  transition: transform var(--transition-bounce);
+}
+
+.foil-wrapper:hover {
+  transform: translateY(-8px) scale(1.03);
+}
+
+.foil-card-pack {
+  width: 250px;
+  height: 380px;
+  background: linear-gradient(135deg, #b91c1c 0%, #dc2626 30%, #ef4444 60%, #991b1b 100%);
+  border-radius: 16px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 25px rgba(239, 68, 68, 0.4);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.foil-shine {
+  position: absolute;
+  inset: -100%;
+  background: linear-gradient(
+    45deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 60%
+  );
+  animation: holographicShine 3s infinite linear;
+  pointer-events: none;
+}
+
+.foil-seal-top {
+  height: 18px;
+  background: repeating-linear-gradient(
+    90deg,
+    #7f1d1d,
+    #7f1d1d 4px,
+    #991b1b 4px,
+    #991b1b 8px
+  );
+  border-bottom: 2px solid rgba(0, 0, 0, 0.4);
+}
+
+.foil-seal-bottom {
+  height: 18px;
+  background: repeating-linear-gradient(
+    90deg,
+    #7f1d1d,
+    #7f1d1d 4px,
+    #991b1b 4px,
+    #991b1b 8px
+  );
+  border-top: 2px solid rgba(0, 0, 0, 0.4);
+}
+
+.foil-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  text-align: center;
+}
+
+.foil-badge {
+  background: var(--accent-gold);
+  color: #000;
+  font-weight: 900;
+  font-size: 0.65rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.08em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.foil-pokeball-art {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.sparkle-icon {
+  color: var(--accent-gold);
+  filter: drop-shadow(0 0 10px var(--accent-gold));
+}
+
+.foil-title {
+  font-family: var(--font-stats);
+  font-size: 2rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.1em;
+  text-shadow: 0 3px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+.foil-subtitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fef08a;
+  letter-spacing: 0.05em;
+}
+
+.foil-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.foil-tag {
+  color: var(--accent-gold);
+}
+
+/* Actions */
+.booster-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-open-booster {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--accent-gold) 0%, #f59e0b 100%);
+  color: #000;
+  font-size: 1.1rem;
+  font-weight: 800;
+  padding: 14px 28px;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+  transition: all var(--transition-bounce);
+}
+
+.btn-open-booster:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 12px 30px rgba(245, 158, 11, 0.6);
+}
+
+.no-coins-warning {
+  color: var(--accent-crimson);
+  font-size: 0.85rem;
+}
+
+/* STAGE 2: RIPPING ANIMATION */
+.booster-stage-ripping {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+}
+
+.foil-card-pack.is-ripping {
+  animation: shakeImpact 0.4s infinite;
+  filter: brightness(1.3);
+}
+
+.spin-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* STAGE 3: REVEALING GRID */
+.booster-stage-revealing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 0;
+}
+
+.reveal-instruction p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.reveal-instruction .success-text {
+  color: var(--accent-emerald);
+  font-weight: 700;
+}
+
+.cards-reveal-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.reveal-card-slot {
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+
+.reveal-card-slot:hover {
+  transform: translateY(-6px);
+}
+
+.reveal-controls {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-glass-hover);
+  border: 1px solid var(--border-glass);
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-collect-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--accent-emerald) 0%, #059669 100%);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 800;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  transition: all var(--transition-bounce);
+}
+
+.btn-collect-all:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.6);
+}
