@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import './DeckBuilder.css';
-import PokemonCard from '../PokemonCard/PokemonCard';
-import { sound } from '../../services/soundService';
+import './CreadorMazo.css';
+import CartaPokemon from '../CartaPokemon/CartaPokemon';
+import { sound } from '../../servicios/servicioSonido';
 import { 
   Shield, 
   Swords, 
@@ -15,13 +15,13 @@ import {
   Sparkles
 } from 'lucide-react';
 
-const POKEMON_TYPES = [
+const TIPOS_POKEMON = [
   'todos', 'normal', 'fire', 'water', 'grass', 'electric', 'ice',
   'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug',
   'rock', 'ghost', 'dragon', 'steel', 'dark', 'fairy'
 ];
 
-export default function DeckBuilder({
+export default function CreadorMazo({
   collection = [],
   battleDeck = [],
   onUpdateDeck,
@@ -31,12 +31,11 @@ export default function DeckBuilder({
   const [selectedType, setSelectedType] = useState('todos');
   const [selectedRarity, setSelectedRarity] = useState('todos');
   const [sortBy, setSortBy] = useState('dex'); // 'dex', 'hp', 'attack', 'defense', 'speed'
-  const [selectedCardForModal, setSelectedCardForModal] = useState(null);
 
-  // Deck Set for rapid checking
+  // UIDs del mazo para búsqueda instantánea
   const deckUids = useMemo(() => new Set(battleDeck.map(c => c.uid)), [battleDeck]);
 
-  // Filter & Sort Collection
+  // Filtrado y ordenación
   const filteredCollection = useMemo(() => {
     return collection
       .filter(card => {
@@ -56,7 +55,7 @@ export default function DeckBuilder({
       });
   }, [collection, searchQuery, selectedType, selectedRarity, sortBy]);
 
-  // Calculate Deck Stats
+  // Estadísticas del mazo
   const deckStats = useMemo(() => {
     if (battleDeck.length === 0) return { avgAtk: 0, avgDef: 0, totalHp: 0 };
     const totalHp = battleDeck.reduce((acc, c) => acc + (c.maxHp || 0), 0);
@@ -68,11 +67,9 @@ export default function DeckBuilder({
   const handleToggleDeckCard = (card) => {
     sound.playClick();
     if (deckUids.has(card.uid)) {
-      // Remove from deck
       const newDeck = battleDeck.filter(c => c.uid !== card.uid);
       onUpdateDeck(newDeck);
     } else {
-      // Add to deck if space allows
       if (battleDeck.length >= maxDeckSize) {
         alert(`Tu mazo de batalla ya está completo (máximo ${maxDeckSize} cartas). Quita una antes.`);
         return;
@@ -83,7 +80,7 @@ export default function DeckBuilder({
 
   return (
     <div className="deck-builder-container">
-      {/* SECTION 1: ACTIVE BATTLE DECK */}
+      {/* SECCIÓN 1: MAZO DE BATALLA ACTIVO */}
       <div className="active-deck-panel">
         <div className="deck-panel-header">
           <div className="deck-title-group">
@@ -96,7 +93,7 @@ export default function DeckBuilder({
 
           <div className="deck-stats-pill">
             <span className="stat-chip">
-              <Heart size={16} color="#ef4444" /> {deckStats.totalHp} HP Total
+              <Heart size={16} color="#ef4444" /> {deckStats.totalHp} PS Total
             </span>
             <span className="stat-chip">
               <Swords size={16} color="#fbbf24" /> {deckStats.avgAtk} ATK Medio
@@ -107,7 +104,7 @@ export default function DeckBuilder({
           </div>
         </div>
 
-        {/* Deck Slots */}
+        {/* Ranuras del mazo */}
         <div className="deck-slots-grid">
           {Array.from({ length: maxDeckSize }).map((_, index) => {
             const card = battleDeck[index];
@@ -115,7 +112,7 @@ export default function DeckBuilder({
               <div key={card ? card.uid : `empty-${index}`} className="deck-slot-card">
                 {card ? (
                   <div className="slot-card-active">
-                    <PokemonCard
+                    <CartaPokemon
                       pokemon={card}
                       size="sm"
                       badge={`SLOT ${index + 1}`}
@@ -142,7 +139,7 @@ export default function DeckBuilder({
         </div>
       </div>
 
-      {/* SECTION 2: FILTERS & SEARCH */}
+      {/* SECCIÓN 2: FILTROS Y BÚSQUEDA */}
       <div className="collection-filters-bar">
         <div className="search-box">
           <Search size={18} className="search-icon" />
@@ -157,7 +154,7 @@ export default function DeckBuilder({
         <div className="filter-group">
           <Filter size={16} />
           <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
-            {POKEMON_TYPES.map(t => (
+            {TIPOS_POKEMON.map(t => (
               <option key={t} value={t}>
                 {t === 'todos' ? 'Todos los Tipos' : t.toUpperCase()}
               </option>
@@ -180,7 +177,7 @@ export default function DeckBuilder({
           <ArrowUpDown size={16} />
           <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
             <option value="dex">Número Pokédex</option>
-            <option value="hp">Mayor HP</option>
+            <option value="hp">Mayor PS</option>
             <option value="attack">Mayor Ataque</option>
             <option value="defense">Mayor Defensa</option>
             <option value="speed">Mayor Velocidad</option>
@@ -188,7 +185,7 @@ export default function DeckBuilder({
         </div>
       </div>
 
-      {/* SECTION 3: COLLECTION VAULT GRID */}
+      {/* SECCIÓN 3: BÓVEDA DE COLECCIÓN */}
       <div className="collection-vault-header">
         <h4>Tu Colección ({filteredCollection.length} {filteredCollection.length === 1 ? 'carta' : 'cartas'})</h4>
         <small>Haz clic en cualquier carta para añadirla o retirarla de tu mazo activo.</small>
@@ -204,7 +201,7 @@ export default function DeckBuilder({
             const inDeck = deckUids.has(card.uid);
             return (
               <div key={card.uid} className={`collection-card-item ${inDeck ? 'is-in-deck' : ''}`}>
-                <PokemonCard
+                <CartaPokemon
                   pokemon={card}
                   size="sm"
                   badge={inDeck ? 'EN MAZO' : null}
