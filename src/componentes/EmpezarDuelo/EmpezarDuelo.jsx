@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import './StatDuel.css';
-import PokemonCard from '../PokemonCard/PokemonCard';
-import { getPokemon } from '../../services/pokeApi';
-import { sound } from '../../services/soundService';
+import './EmpezarDuelo.css';
+import CartaPokemon from '../CartaPokemon/CartaPokemon';
+import { getPokemon } from '../../servicios/servicioPokeApi';
+import { sound } from '../../servicios/servicioSonido';
 import { Trophy, Zap, Heart, Swords, Shield, Gauge, RotateCcw } from 'lucide-react';
 
-export default function StatDuel({
+export default function EmpezarDuelo({
   playerCollection = [],
   onRewardCoins,
 }) {
@@ -22,7 +22,7 @@ export default function StatDuel({
   const [roundResult, setRoundResult] = useState(null); // 'win' | 'lose' | 'tie'
   const [gameFinished, setGameFinished] = useState(false);
 
-  // Setup round
+  // Configurar ronda
   const setupRound = async () => {
     if (!playerCollection || playerCollection.length === 0) return;
 
@@ -30,11 +30,11 @@ export default function StatDuel({
     setChosenStat(null);
     setRoundResult(null);
 
-    // Pick random card from player collection
+    // Carta aleatoria de tu colección
     const randomPlayerCard = playerCollection[Math.floor(Math.random() * playerCollection.length)];
     setPlayerCard(randomPlayerCard);
 
-    // Pick random rival card from PokéAPI (Gen 1-3)
+    // Carta rival aleatoria de PokéAPI
     const randomRivalId = Math.floor(Math.random() * 300) + 1;
     const fetchedRival = await getPokemon(randomRivalId);
     setRivalCard(fetchedRival);
@@ -49,7 +49,7 @@ export default function StatDuel({
 
     setChosenStat(statKey);
     sound.playCardFlip();
-    setRivalFlipped(false); // Reveal rival card!
+    setRivalFlipped(false);
 
     const playerVal = playerCard[statKey] || 0;
     const rivalVal = rivalCard[statKey] || 0;
@@ -68,7 +68,6 @@ export default function StatDuel({
         setRoundResult('tie');
       }
 
-      // Check if game ends after maxRounds
       if (round >= maxRounds) {
         setTimeout(() => {
           setGameFinished(true);
@@ -101,11 +100,11 @@ export default function StatDuel({
 
   return (
     <div className="stat-duel-container">
-      {/* HEADER & SCOREBOARD */}
+      {/* MARCADOR */}
       <div className="duel-header">
         <div className="duel-title-info">
           <h2>Duelo Rápido de Estadísticas</h2>
-          <p>Elige tu mejor atributo (HP, ATK, DEF o SPD). ¡El valor más alto gana la ronda!</p>
+          <p>Elige tu mejor atributo (PS, ATK, DEF o VEL). ¡El valor más alto gana la ronda!</p>
         </div>
 
         <div className="duel-scoreboard">
@@ -124,13 +123,13 @@ export default function StatDuel({
         </div>
       </div>
 
-      {/* CLASH ARENA */}
+      {/* ENFRENTAMIENTO */}
       <div className="clash-arena">
-        {/* PLAYER CARD */}
+        {/* TU CARTA */}
         <div className="clash-column">
           <div className="clash-badge player">TU CARTA</div>
           {playerCard && (
-            <PokemonCard
+            <CartaPokemon
               pokemon={playerCard}
               size="md"
               showStats={true}
@@ -139,7 +138,7 @@ export default function StatDuel({
           )}
         </div>
 
-        {/* VS & ACTION CONTROLS */}
+        {/* SELECTOR DE ATRIBUTO */}
         <div className="clash-controls-center">
           <div className="clash-vs">VS</div>
 
@@ -151,7 +150,7 @@ export default function StatDuel({
                   className="btn-stat-choice hp"
                   onClick={() => handleStatSelect('hp')}
                 >
-                  <Heart size={18} /> HP: {playerCard?.hp}
+                  <Heart size={18} /> PS: {playerCard?.hp}
                 </button>
                 <button
                   className="btn-stat-choice atk"
@@ -169,7 +168,7 @@ export default function StatDuel({
                   className="btn-stat-choice spd"
                   onClick={() => handleStatSelect('speed')}
                 >
-                  <Gauge size={18} /> SPD: {playerCard?.speed}
+                  <Gauge size={18} /> VEL: {playerCard?.speed}
                 </button>
               </div>
             </div>
@@ -192,11 +191,11 @@ export default function StatDuel({
           )}
         </div>
 
-        {/* RIVAL CARD */}
+        {/* CARTA RIVAL */}
         <div className="clash-column">
           <div className="clash-badge rival">CARTA RIVAL</div>
           {rivalCard && (
-            <PokemonCard
+            <CartaPokemon
               pokemon={rivalCard}
               flipped={rivalFlipped}
               size="md"
@@ -207,7 +206,7 @@ export default function StatDuel({
         </div>
       </div>
 
-      {/* FINAL GAME RESULT MODAL */}
+      {/* MODAL RESULTADO FINAL */}
       {gameFinished && (
         <div className="duel-modal-overlay">
           <div className="duel-summary-card">
