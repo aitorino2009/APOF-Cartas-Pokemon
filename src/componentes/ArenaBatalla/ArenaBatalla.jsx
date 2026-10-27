@@ -1,25 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
-import './BattleArena.css';
-import PokemonCard from '../PokemonCard/PokemonCard';
-import { getPokemon } from '../../services/pokeApi';
-import { calculateDamage, chooseAiAction, getTypeMultiplier } from '../../services/gameRules';
-import { sound } from '../../services/soundService';
+import './ArenaBatalla.css';
+import CartaPokemon from '../CartaPokemon/CartaPokemon';
+import { getPokemon } from '../../servicios/servicioPokeApi';
+import { calculateDamage, chooseAiAction, getTypeMultiplier } from '../../servicios/reglasJuego';
+import { sound } from '../../servicios/servicioSonido';
 import { 
   Swords, 
   Flame, 
   ShieldAlert, 
-  ArrowLeftRight, 
   Trophy, 
   Skull, 
-  RotateCcw,
-  Sparkles,
-  Zap
+  RotateCcw
 } from 'lucide-react';
 
-const RIVAL_NAMES = ['Rival Azul', 'Entrenador Rojo', 'Líder Brock', 'Líder Misty', 'Campeona Cynthia'];
+const NOMBRES_RIVAL = ['Rival Azul', 'Entrenador Rojo', 'Líder Brock', 'Líder Misty', 'Campeona Cynthia'];
 
-export default function BattleArena({
+export default function ArenaBatalla({
   playerDeck = [],
   onBattleVictory,
   onBattleDefeat,
@@ -27,29 +24,29 @@ export default function BattleArena({
   const [battleState, setBattleState] = useState('loading'); // 'loading' | 'fighting' | 'player_won' | 'player_lost'
   const [rivalName, setRivalName] = useState('Rival Azul');
   
-  // Player Cards in Arena
+  // Cartas del jugador en la Arena
   const [playerCards, setPlayerCards] = useState([]);
   const [playerActiveIdx, setPlayerActiveIdx] = useState(0);
   const [playerGuarding, setPlayerGuarding] = useState(false);
 
-  // Rival Cards in Arena
+  // Cartas del rival en la Arena
   const [rivalCards, setRivalCards] = useState([]);
   const [rivalActiveIdx, setRivalActiveIdx] = useState(0);
   const [rivalGuarding, setRivalGuarding] = useState(false);
 
-  // Combat Turn State
+  // Turnos y combate
   const [currentTurn, setCurrentTurn] = useState('player'); // 'player' | 'ai'
   const [turnCount, setTurnCount] = useState(1);
   const [isAnimating, setIsAnimating] = useState(false);
   
-  // Animation flags
+  // Animaciones de impacto
   const [playerAttacking, setPlayerAttacking] = useState(false);
   const [rivalAttacking, setRivalAttacking] = useState(false);
   const [playerDamaged, setPlayerDamaged] = useState(false);
   const [rivalDamaged, setRivalDamaged] = useState(false);
   const [floatingDamage, setFloatingDamage] = useState({ target: null, text: '' });
 
-  // Combat Logs
+  // Registro de combate
   const [battleLogs, setBattleLogs] = useState([]);
   const logEndRef = useRef(null);
 
@@ -61,7 +58,7 @@ export default function BattleArena({
     logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [battleLogs]);
 
-  // Start / Reset Battle
+  // Iniciar / Reiniciar batalla
   const startNewBattle = async () => {
     if (!playerDeck || playerDeck.length === 0) {
       setBattleState('no_deck');
@@ -76,11 +73,9 @@ export default function BattleArena({
     setRivalGuarding(false);
     setFloatingDamage({ target: null, text: '' });
 
-    // Pick random rival
-    const chosenRival = RIVAL_NAMES[Math.floor(Math.random() * RIVAL_NAMES.length)];
+    const chosenRival = NOMBRES_RIVAL[Math.floor(Math.random() * NOMBRES_RIVAL.length)];
     setRivalName(chosenRival);
 
-    // Deep clone player cards with full HP
     const freshPlayerCards = playerDeck.map(card => ({
       ...card,
       hp: card.maxHp || card.hp || 50,
@@ -89,8 +84,8 @@ export default function BattleArena({
     setPlayerCards(freshPlayerCards);
     setPlayerActiveIdx(0);
 
-    // Generate Rival Team matching player deck size (2-3 random Pokémon)
-    const rivalPokemonIds = [6, 9, 3, 149, 130, 94, 65, 143, 59, 131, 248]; // Iconic strong Pokemon
+    // Generar equipo rival
+    const rivalPokemonIds = [6, 9, 3, 149, 130, 94, 65, 143, 59, 131, 248];
     const chosenIds = [];
     for (let i = 0; i < freshPlayerCards.length; i++) {
       const randomId = rivalPokemonIds[Math.floor(Math.random() * rivalPokemonIds.length)];
@@ -125,7 +120,7 @@ export default function BattleArena({
   const rivalActiveCard = rivalCards[rivalActiveIdx];
 
   // ==========================================
-  // PLAYER ACTIONS
+  // ACCIONES DEL JUGADOR
   // ==========================================
   const executePlayerAction = async (actionType) => {
     if (currentTurn !== 'player' || isAnimating || battleState !== 'fighting') return;
@@ -141,7 +136,6 @@ export default function BattleArena({
       return;
     }
 
-    // Attacks (physical or elemental)
     setPlayerAttacking(true);
     sound.playAttack();
 
@@ -165,7 +159,6 @@ export default function BattleArena({
         text: `-${combatResult.damage} ${combatResult.isCritical ? '¡CRÍTICO!' : ''}`,
       });
 
-      // Apply damage to rival
       const updatedRivalCards = [...rivalCards];
       const newHp = Math.max(0, rivalActiveCard.hp - combatResult.damage);
       updatedRivalCards[rivalActiveIdx] = {
@@ -181,14 +174,12 @@ export default function BattleArena({
         combatResult.typeMultiplier >= 2 ? 'effective' : 'normal'
       );
 
-      // Reset rival guard
       setRivalGuarding(false);
 
       setTimeout(() => {
         setRivalDamaged(false);
         setFloatingDamage({ target: null, text: '' });
 
-        // Check if rival fainted
         if (newHp <= 0) {
           handleRivalFainted(updatedRivalCards);
         } else {
@@ -216,7 +207,7 @@ export default function BattleArena({
   };
 
   // ==========================================
-  // AI TURN
+  // TURNO DE LA IA
   // ==========================================
   useEffect(() => {
     if (currentTurn !== 'ai' || battleState !== 'fighting' || isAnimating) return;
@@ -242,7 +233,6 @@ export default function BattleArena({
       return;
     }
 
-    // AI Attacks
     setRivalAttacking(true);
     sound.playAttack();
 
@@ -266,7 +256,6 @@ export default function BattleArena({
         text: `-${combatResult.damage} ${combatResult.isCritical ? '¡CRÍTICO!' : ''}`,
       });
 
-      // Apply damage to player
       const updatedPlayerCards = [...playerCards];
       const newHp = Math.max(0, playerActiveCard.hp - combatResult.damage);
       updatedPlayerCards[playerActiveIdx] = {
@@ -282,14 +271,12 @@ export default function BattleArena({
         combatResult.typeMultiplier >= 2 ? 'effective' : 'normal'
       );
 
-      // Reset player guard
       setPlayerGuarding(false);
 
       setTimeout(() => {
         setPlayerDamaged(false);
         setFloatingDamage({ target: null, text: '' });
 
-        // Check if player fainted
         if (newHp <= 0) {
           handlePlayerFainted(updatedPlayerCards);
         } else {
@@ -306,20 +293,18 @@ export default function BattleArena({
   };
 
   // ==========================================
-  // FAINT & GAME OVER HANDLERS
+  // FIN DE COMBATE
   // ==========================================
   const handleRivalFainted = (updatedRivals) => {
     addLog(`¡${rivalActiveCard.name} enemigo se ha debilitado!`, 'faint');
 
-    // Find next alive rival card
     const nextAliveIdx = updatedRivals.findIndex(c => c.hp > 0);
     if (nextAliveIdx === -1) {
-      // Rival has no more pokemon -> Player Wins!
       sound.playVictory();
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
       setBattleState('player_won');
       addLog(`¡Victoria! Has derrotado a todo el equipo de ${rivalName}.`, 'highlight');
-      onBattleVictory?.(100); // 100 coins reward
+      onBattleVictory?.(100);
       setIsAnimating(false);
     } else {
       setTimeout(() => {
@@ -333,17 +318,14 @@ export default function BattleArena({
   const handlePlayerFainted = (updatedPlayers) => {
     addLog(`¡Tu ${playerActiveCard.name} se ha debilitado!`, 'faint');
 
-    // Find next alive player card
     const nextAliveIdx = updatedPlayers.findIndex(c => c.hp > 0);
     if (nextAliveIdx === -1) {
-      // All player pokemon fainted -> Player Lost!
       sound.playDefeat();
       setBattleState('player_lost');
       addLog(`¡Derrota! Todo tu equipo Pokémon ha sido debilitado.`, 'highlight');
       onBattleDefeat?.();
       setIsAnimating(false);
     } else {
-      // Auto-switch to next alive
       setTimeout(() => {
         setPlayerActiveIdx(nextAliveIdx);
         addLog(`¡Adelante, ${updatedPlayers[nextAliveIdx].name}!`, 'switch');
@@ -352,7 +334,6 @@ export default function BattleArena({
     }
   };
 
-  // Type Advantage preview for active cards
   const elementalMultiplier = playerActiveCard && rivalActiveCard
     ? getTypeMultiplier(playerActiveCard.primaryType, rivalActiveCard.primaryType, rivalActiveCard.secondaryType)
     : 1;
@@ -369,7 +350,7 @@ export default function BattleArena({
 
   return (
     <div className="battle-arena-container">
-      {/* ARENA HEADER */}
+      {/* CABECERA DE LA ARENA */}
       <div className="arena-header">
         <div className="trainer-profile player-trainer">
           <div className="trainer-avatar">🧢</div>
@@ -395,9 +376,9 @@ export default function BattleArena({
         </div>
       </div>
 
-      {/* ARENA BATTLEFIELD */}
+      {/* CAMPO DE BATALLA */}
       <div className="battlefield-grid">
-        {/* RIVAL SIDE */}
+        {/* LADO RIVAL */}
         <div className="battlefield-side rival-side">
           <div className="side-bench">
             <span className="bench-title">Banquillo Rival:</span>
@@ -406,7 +387,7 @@ export default function BattleArena({
                 <div
                   key={c.uid || idx}
                   className={`bench-dot ${idx === rivalActiveIdx ? 'active' : ''} ${c.hp <= 0 ? 'fainted' : ''}`}
-                  title={`${c.name} (${c.hp}/${c.maxHp} HP)`}
+                  title={`${c.name} (${c.hp}/${c.maxHp} PS)`}
                 >
                   <img src={c.image} alt={c.name} />
                 </div>
@@ -420,7 +401,7 @@ export default function BattleArena({
                 {floatingDamage.target === 'rival' && (
                   <div className="floating-damage-number">{floatingDamage.text}</div>
                 )}
-                <PokemonCard
+                <CartaPokemon
                   pokemon={rivalActiveCard}
                   size="md"
                   isAttacking={rivalAttacking}
@@ -434,7 +415,7 @@ export default function BattleArena({
           </div>
         </div>
 
-        {/* PLAYER SIDE */}
+        {/* LADO JUGADOR */}
         <div className="battlefield-side player-side">
           <div className="active-card-podium">
             {playerActiveCard && (
@@ -442,7 +423,7 @@ export default function BattleArena({
                 {floatingDamage.target === 'player' && (
                   <div className="floating-damage-number">{floatingDamage.text}</div>
                 )}
-                <PokemonCard
+                <CartaPokemon
                   pokemon={playerActiveCard}
                   size="md"
                   isAttacking={playerAttacking}
@@ -463,7 +444,7 @@ export default function BattleArena({
                   key={c.uid || idx}
                   className={`bench-dot player-bench-dot ${idx === playerActiveIdx ? 'active' : ''} ${c.hp <= 0 ? 'fainted' : ''}`}
                   onClick={() => handlePlayerSwitch(idx)}
-                  title={`Cambiar a ${c.name} (${c.hp}/${c.maxHp} HP)`}
+                  title={`Cambiar a ${c.name} (${c.hp}/${c.maxHp} PS)`}
                 >
                   <img src={c.image} alt={c.name} />
                   {idx === playerActiveIdx && <span className="bench-dot-badge">ACTIVO</span>}
@@ -474,9 +455,8 @@ export default function BattleArena({
         </div>
       </div>
 
-      {/* COMBAT DASHBOARD: ACTION CONTROLS & BATTLE LOG */}
+      {/* PANEL DE CONTROL DE COMBATE */}
       <div className="combat-dashboard">
-        {/* ACTION BUTTONS */}
         <div className="action-panel">
           <h4 className="panel-title">Comandos de Batalla</h4>
           <div className="actions-grid">
@@ -520,7 +500,7 @@ export default function BattleArena({
           </div>
         </div>
 
-        {/* REAL-TIME BATTLE LOG */}
+        {/* REGISTRO DE COMBATE EN VIVO */}
         <div className="battle-log-panel">
           <div className="log-header">
             <span>Registro de Combate</span>
@@ -537,7 +517,7 @@ export default function BattleArena({
         </div>
       </div>
 
-      {/* VICTORY MODAL OVERLAY */}
+      {/* MODAL DE VICTORIA */}
       {battleState === 'player_won' && (
         <div className="battle-modal-overlay">
           <div className="battle-result-card victory">
@@ -555,7 +535,7 @@ export default function BattleArena({
         </div>
       )}
 
-      {/* DEFEAT MODAL OVERLAY */}
+      {/* MODAL DE DERROTA */}
       {battleState === 'player_lost' && (
         <div className="battle-modal-overlay">
           <div className="battle-result-card defeat">
